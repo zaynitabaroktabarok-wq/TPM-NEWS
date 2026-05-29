@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TPM 3 NEWS - Menguak Teror Pocong</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome untuk Ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Transisi halus saat ganti tema */
+        body {
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+        /* Efek khusus untuk mode horor */
+        .horror-mode {
+            background-color: #0b0c10 !important;
+            color: #c5c6c7 !important;
+        }
+        .horror-mode .bg-card {
+            background-color: #1f2833 !important;
+            border-color: #451a1a !important;
+        }
+        .horror-mode .text-primary {
+            color: #ff4d4d !important;
+        }
+        .horror-mode .border-custom {
+            border-color: #ff4d4d !important;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+
+    <!-- HEADER / NAVIGATION -->
+    <header class="bg-white shadow-md sticky top-0 z-40 transition-colors duration-500 id="mainHeader"">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center border-b border-gray-100">
+                <!-- Logo Berita -->
+                <div class="flex-shrink-0 flex items-center">
+                    <span class="text-2xl font-black tracking-tighter text-red-600 flex items-center gap-2">
+                        <i class="fa-solid fa-newspaper"></i> TPM <span class="text-gray-900" id="subLogo">NEWS</span>
+                    </span>
+                </div>
+                
+                <!-- Menu Utama (Desktop) -->
+                <nav class="hidden md:flex space-x-8 font-semibold text-sm uppercase tracking-wider">
+                    <a href="#" onclick="filterCategory('semua')" class="text-red-600 hover:text-red-700">Home</a>
+                    <a href="#" onclick="filterCategory('Kronologi')" class="text-gray-600 hover:text-red-600">Kronologi</a>
+                    <a href="#" onclick="filterCategory('Investigasi')" class="text-gray-600 hover:text-red-600">Investigasi</a>
+                    <a href="#" onclick="filterCategory('Kesaksian')" class="text-gray-600 hover:text-red-600">Kesaksian Warga</a>
+                </nav>
+
+                <!-- Tombol Mode Horor -->
+                <div class="flex items-center gap-4">
+                    <button id="themeToggle" onclick="toggleTheme()" class="bg-gray-900 text-white dark:bg-red-600 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest hover:opacity-90 shadow-md transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-ghost animate-bounce"></i> <span id="themeBtnText">Mode Horor Malam</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO SECTION / BREAKING NEWS -->
+    <section class="relative bg-black text-white overflow-hidden py-16 md:py-24">
+        <!-- Overlay Gambar Latar Belakang Estetik (Simulasi Foto TKP Malam Hari) -->
+        <div class="absolute inset-0 opacity-40 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=1200&q=80');"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent"></div>
+        
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
+            <span class="bg-red-600 text-white text-xs font-extrabold px-3 py-1 rounded uppercase tracking-widest inline-block mb-4 animate-pulse">
+                <i class="fa-solid fa-circle-exclamation mr-1"></i> Laporan Utama
+            </span>
+            <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight max-w-3xl leading-tight mb-4">
+                Geger Teror Pocong Berdiri Diam di Pinggir Jalan Kampung Tangerang, Warga Takut Keluar Malam
+            </h1>
+            <p class="text-gray-300 max-w-xl text-base md:text-lg mb-6">
+                Sudah satu minggu terakhir, warga dihebohkan oleh penampakan sosok putih tinggi di area perkebunan bambu dekat pemukiman. Polisi mulai turun tangan menyelidiki keaslian video viral.
+            </p>
+            <div class="flex items-center text-xs text-gray-400 gap-4">
+                <span><i class="fa-regular fa-user mr-1"></i> Tim TPM3</span>
+                <span><i class="fa-regular fa-clock mr-1"></i> Baru Saja Diperbarui</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- UTILITY BAR: SEARCH AND FILTER -->
+    <section class="bg-white border-b border-gray-200 py-4 shadow-sm sticky top-[80px] z-30 transition-colors duration-500" id="utilityBar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            
+            <!-- Bilah Pencarian -->
+            <div class="relative flex-1 max-w-md">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </span>
+                <input type="text" id="searchInput" onkeyup="searchNews()" placeholder="Cari berita teror pocong... (contoh: polisi, ronda, prank)" 
+                       class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 bg-gray-50 text-sm">
+            </div>
+
+            <!-- Tombol Filter Kategori Cepat -->
+            <div class="flex flex-wrap gap-2 text-xs font-bold uppercase tracking-wider">
+                <button onclick="filterCategory('semua')" class="filter-btn px-4 py-2 rounded bg-red-600 text-white">Semua</button>
+                <button onclick="filterCategory('Kronologi')" class="filter-btn px-4 py-2 rounded bg-gray-200 text-gray-700 hover:bg-gray-300">Kronologi</button>
+                <button onclick="filterCategory('Investigasi')" class="filter-btn px-4 py-2 rounded bg-gray-200 text-gray-700 hover:bg-gray-300">Investigasi</button>
+                <button onclick="filterCategory('Kesaksian')" class="filter-btn px-4 py-2 rounded bg-gray-200 text-gray-700 hover:bg-gray-300">Kesaksian</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- DAFTAR BERITA (KIRI - 2 KOLOM) -->
+            <div class="lg:col-span-2 space-y-6" id="newsContainer">
+                <!-- Berita akan dimasukkan secara dinamis menggunakan JavaScript -->
+            </div>
+
+            <!-- SIDEBAR (KANAN - 1 KOLOM) -->
+            <aside class="space-y-8">
+                
+                <!-- WIDGET POLING INTERAKTIF -->
+                <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm transition-colors duration-500 bg-card">
+                    <h3 class="text-lg font-bold border-b border-gray-100 pb-3 mb-4 flex items-center gap-2 text-primary">
+                        <i class="fa-solid fa-square-poll-vertical text-red-600"></i> Suara Pembaca
+                    </h3>
+                    <p class="text-sm font-semibold mb-4">Menurut Anda, apa sebenarnya fenomena pocong di Tangerang ini?</p>
+                    <div class="space-y-3">
+                        <button onclick="vote('prank')" class="w-full text-left p-3 text-sm bg-gray-50 hover:bg-gray-100 rounded border border-gray-200 transition-all flex justify-between items-center">
+                            <span><i class="fa-regular fa-face-laugh mr-2"></i> Prank/Kreator Konten Iseng</span>
+                            <span id="v-prank" class="font-bold text-gray-500">42%</span>
+                        </button>
+                        <button onclick="vote('asli')" class="w-full text-left p-3 text-sm bg-gray-50 hover:bg-gray-100 rounded border border-gray-200 transition-all flex justify-between items-center">
+                            <span><i class="fa-solid fa-ghost mr-2"></i> Makhluk Halus/Mistik Asli</span>
+                            <span id="v-asli" class="font-bold text-gray-500">38%</span>
+                        </button>
+                        <button onclick="vote('pencuri')" class="w-full text-left p-3 text-sm bg-gray-50 hover:bg-gray-100 rounded border border-gray-200 transition-all flex justify-between items-center">
+                            <span><i class="fa-solid fa-mask mr-2"></i> Modus Pengalihan Maling</span>
+                            <span id="v-pencuri" class="font-bold text-gray-500">20%</span>
+                        </button>
+                    </div>
+                    <p class="text-[11px] text-gray-400 mt-3 text-center">*Poling bersifat sementara untuk interaksi pembaca.</p>
+                </div>
+
+                <!-- WIDGET UPDATE STATISTIK / LIVE REPORT -->
+                <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm transition-colors duration-500 bg-card">
+                    <h3 class="text-lg font-bold border-b border-gray-100 pb-3 mb-4 flex items-center gap-2 text-primary">
+                        <i class="fa-solid fa-tower-broadcast text-red-600 animate-pulse"></i> Info Posko Keamanan
+                    </h3>
+                    <div class="space-y-4 text-sm">
+                        <div class="flex items-start gap-3">
+                            <span class="bg-red-100 text-red-600 p-2 rounded-full text-xs mt-1"><i class="fa-solid fa-shield-halved"></i></span>
+                            <div>
+                                <h4 class="font-bold">Patroli Malam Ditingkatkan</h4>
+                                <p class="text-xs text-gray-500 mt-1">Polsek setempat menambah 3 personel per malam di area kebun bambu.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <span class="bg-orange-100 text-orange-600 p-2 rounded-full text-xs mt-1"><i class="fa-solid fa-eye"></i></span>
+                            <div>
+                                <h4 class="font-bold">Siskamling Diperketat</h4>
+                                <p class="text-xs text-gray-500 mt-1">Warga RT 04 sepakat ronda bergilir sampai jam 04.50 pagi.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </aside>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-gray-900 text-gray-400 py-12 mt-20 border-t-4 border-red-600">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
+            <p class="text-sm font-bold text-white tracking-widest uppercase">TPM NEWS</p>
+            <p class="text-xs max-w-md mx-auto leading-relaxed">
+                Menyajikan informasi berita lokal, investigasi tajam, terpercaya, dan berimbang di seputar Jabodetabek.
+            </p>
+            <div class="text-xs text-gray-500 pt-4 border-t border-gray-800">
+                &copy; 2026 TPM NEWS. MADE BY ZAYNI, Hak Cipta Dilindungi.
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODAL POPUP: UNTUK DETAIL BACA ARTIKEL -->
+    <div id="articleModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-white rounded-xl max-w-2xl w-full max-h-[85vh] overflow-y-auto shadow-2xl relative transition-colors duration-500 bg-card" onclick="event.stopPropagation()">
+            
+            <!-- Gambar Spanduk Modal -->
+            <div class="h-48 w-full bg-cover bg-center relative" id="modalImage">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                <!-- Tombol Tutup -->
+                <button onclick="closeModal()" class="absolute top-4 right-4 bg-black/60 text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-black transition-all">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <div class="absolute bottom-4 left-6 right-6">
+                    <span id="modalCategory" class="bg-red-600 text-white text-[10px] font-black px-2 py-0.5 rounded uppercase tracking-wider"></span>
+                    <h2 id="modalTitle" class="text-white text-xl md:text-2xl font-bold mt-1 line-clamp-2"></h2>
+                </div>
+            </div>
+
+            <!-- Isi Artikel Lengkap -->
+            <div class="p-6 md:p-8 space-y-4">
+                <div class="flex justify-between items-center text-xs text-gray-400 border-b border-gray-100 pb-3">
+                    <span id="modalMeta"><i class="fa-regular fa-clock mr-1"></i> </span>
+                    <button onclick="shareArticle()" class="text-red-500 hover:underline flex items-center gap-1">
+                        <i class="fa-regular fa-share-from-square"></i> Bagikan
+                    </button>
+                </div>
+                
+                <div id="modalBody" class="text-sm md:text-base leading-relaxed space-y-3 text-justify">
+                    <!-- Paragraf berita akan diisi oleh JS -->
+                </div>
+
+                <!-- KOLOM KOMENTAR DI DALAM MODAL -->
+                <div class="border-t border-gray-200 pt-6 mt-8">
+                    <h4 class="text-sm font-bold uppercase tracking-wider mb-4 text-primary"><i class="fa-regular fa-comments mr-1"></i> Komentar Warga</h4>
+                    
+                    <!-- Form Komentar -->
+                    <div class="flex gap-2 mb-4">
+                        <input type="text" id="commentInput" placeholder="Tulis tanggapan atau kesaksian Anda..." 
+                               class="flex-1 p-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-red-500 bg-gray-50 text-gray-800">
+                        <button onclick="addComment()" class="bg-red-600 text-white text-xs font-bold px-4 rounded hover:bg-red-700 transition-colors uppercase tracking-wider">Kirim</button>
+                    </div>
+
+                    <!-- List Komentar -->
+                    <div id="commentsContainer" class="space-y-3 max-h-40 overflow-y-auto pr-2">
+                        <!-- Komentar Bawaan -->
+                        <div class="bg-gray-50 p-3 rounded text-xs border border-gray-100">
+                            <span class="font-bold text-red-600">Warga_PasarKemis:</span> Semalam saya lewat emang sepi banget jalannya, mending cari jalan memutar aja mas daripada merinding.
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded text-xs border border-gray-100">
+                            <span class="font-bold text-red-600">Roni_Intel:</span> Fix ini mah kerjaan bocah iseng pengen viral di TikTok, usut pak polisi!
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <!-- DATABASE BERITA & LOGIKA INTERAKTIF (JAVASCRIPT) -->
+    <script>
+        // 1. DATABASE ARTIKEL BERITA
+        const databaseBerita = [
+            {
+                id: 1,
+                kategori: "Kronologi",
+                judul: "Kronologi Lengkap Penampakan Pocong Viral di Cikupa Tangerang",
+                ringkasan: "Awal mula kehebohan dipicu oleh rekaman kamera dasbor (dashcam) mobil seorang pengendara yang melintas pada pukul 02.15 WIB dini hari.",
+                isi: "Kejadian bermula ketika seorang pengendara mobil, Hermawan (34), sedang dalam perjalanan pulang kerja melintasi jalan alternatif desa yang minim penerangan jalan. Tiba-tiba di dekat rimbunan pohon bambu, lampu mobil menyorot sesosok putih tegak berdiri kaku di bahu jalan. Rekaman video berdurasi 15 detik tersebut menyebar cepat di grup WhatsApp warga setempat hingga memicu kepanikan dan membuat pos ronda kembali diaktifkan secara ketat.",
+                gambar: "https://images.unsplash.com/photo-1505635552518-3448ff116af3?auto=format&fit=crop&w=600&q=80",
+                waktu: "baru saja",
+                tags: ["kronologi", "cikupa", "dashcam", "video viral"]
+            },
+            {
+                id: 2,
+                kategori: "Investigasi",
+                judul: "Polisi Telusuri Motif di Balik Isu Teror Pocong: Dugaan Prank Konten Medsos",
+                ringkasan: "Pihak kepolisian sektor setempat mulai melakukan patroli malam intensif dan memeriksa saksi-saksi guna menghindari keresahan publik.",
+                isi: "Kapolsek menegaskan bahwa tim siber dan patroli lapangan telah dikerahkan ke lokasi yang diduga sering muncul penampakan. Polisi mencurigai aksi ini sengaja dilakukan oleh sekelompok remaja demi berburu konten media sosial atau pengikut instan. Petugas memperingatkan bahwa aksi semacam ini bisa dijerat hukum jika terbukti mengganggu ketertiban umum dan membahayakan keselamatan pengguna jalan akibat rem mendadak.",
+                gambar: "https://images.unsplash.com/photo-1518156677180-95a2893f3e9f?auto=format&fit=crop&w=600&q=80",
+                waktu: "5 jam yang lalu",
+                tags: ["polisi", "investigasi", "prank", "konten", "hukum"]
+            },
+            {
+                id: 3,
+                kategori: "Kesaksian",
+                judul: "Pengakuan Penjual Nasi Goreng Keliling yang Mengaku Dicegat Sosok Putih",
+                ringkasan: "Kang Sukri, seorang pedagang malam, menceritakan pengalamannya melihat langsung bayangan misterius saat melintasi pemakaman umum.",
+                isi: "Malam itu sekitar jam 01.00 WIB, suasana sangat berkabut tebal. Kang Sukri mengaku dagangannya sudah habis dan berniat kembali ke kontrakan. Ketika melewati gapura dekat TPU, ia melihat bayangan putih meloncat pelan lalu berdiri diam membelakanginya. Tanpa pikir panjang, Kang Sukri meninggalkan gerobaknya dan berlari kencang meminta bantuan ke pos siskamling terdekat. Warga yang mengecek lokasi hanya menemukan gerobak dalam keadaan aman tanpa ada sosok tersebut.",
+                gambar: "https://images.unsplash.com/photo-1498575637358-821023f27355?auto=format&fit=crop&w=600&q=80",
+                waktu: "1 hari yang lalu",
+                tags: ["kesaksian", "warga", "nasi goreng", "tpu", "misteri"]
+            },
+            {
+                id: 4,
+                kategori: "Investigasi",
+                judul: "Sosiolog Angkat Bicara: Fenomena Pocong Lebih ke Arah Kepanikan Massal",
+                ringkasan: "Dosen Sosiologi menilai rumor berantai di media sosial memperkuat sugesti ketakutan kolektif di masyarakat modern.",
+                isi: "Menurut pakar sosiologi urban, efek visual yang buram dipadu dengan narasi horor di media sosial dengan cepat memicu bias konfirmasi. Ketika satu orang mengklaim melihat sesuatu, orang lain yang melintas di tempat yang sama akan tersugesti secara psikologis melihat hal serupa akibat rasa takut yang tertanam sebelumnya. Edukasi dan pencahayaan lampu jalan dinilai menjadi solusi paling efektif meredam kepanikan massal ini.",
+                gambar: "https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=600&q=80",
+                waktu: "baru saja",
+                tags: ["sosiolog", "pakar", "psikologi", "rumor", "edukasi"]
+            }
+        ];
+
+        let kategoriAktif = "semua";
+
+        // 2. RENDERING DATA BERITA KEDALAM KARTU (CARDS)
+        function renderNews(data) {
+            const container = document.getElementById("newsContainer");
+            container.innerHTML = "";
+
+            if (data.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 bg-white rounded-xl border border-gray-200 bg-card p-6">
+                        <i class="fa-regular fa-folder-open text-4xl text-gray-400 mb-3 block"></i>
+                        <p class="text-sm font-bold text-gray-500">Artikel berita tidak ditemukan.</p>
+                        <p class="text-xs text-gray-400 mt-1">Coba gunakan kata kunci pencarian yang lain.</p>
+                    </div>`;
+                return;
+            }
+
+            data.forEach(berita => {
+                const card = document.createElement("article");
+                card.className = "bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col md:flex-row hover:shadow-md transition-all duration-300 bg-card";
+                card.innerHTML = `
+                    <div class="md:w-1/3 h-48 md:h-auto bg-cover bg-center" style="background-image: url('${berita.gambar}')"></div>
+                    <div class="p-6 flex-1 flex flex-col justify-between">
+                        <div>
+                            <span class="bg-red-100 text-red-600 text-[10px] font-black px-2 py-1 rounded uppercase tracking-wider inline-block mb-3">
+                                ${berita.kategori}
+                            </span>
+                            <h2 class="text-lg md:text-xl font-extrabold leading-tight text-gray-900 mb-2 hover:text-red-600 cursor-pointer text-primary" onclick="openModal(${berita.id})">
+                                ${berita.judul}
+                            </h2>
+                            <p class="text-xs md:text-sm text-gray-500 line-clamp-2 mb-4">
+                                ${berita.ringkasan}
+                            </p>
+                        </div>
+                        <div class="flex items-center justify-between text-[11px] text-gray-400 border-t border-gray-100 pt-3">
+                            <span><i class="fa-regular fa-clock mr-1"></i> ${berita.waktu}</span>
+                            <button onclick="openModal(${berita.id})" class="text-red-600 font-bold hover:underline uppercase tracking-wider text-[11px]">
+                                Baca Selengkapnya <i class="fa-solid fa-arrow-right text-[9px] ml-0.5"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // 3. FITUR PENCARIAN (REAL-TIME SEARCH)
+        function searchNews() {
+            const keyword = document.getElementById("searchInput").value.toLowerCase();
+            const hasilFilterKategori = databaseBerita.filter(b => kategoriAktif === "semua" || b.kategori === kategoriAktif);
+            
+            const hasilCari = hasilFilterKategori.filter(berita => {
+                return berita.judul.toLowerCase().includes(keyword) || 
+                       berita.ringkasan.toLowerCase().includes(keyword) ||
+                       berita.tags.some(tag => tag.toLowerCase().includes(keyword));
+            });
+
+            renderNews(hasilCari);
+        }
+
+        // 4. FITUR FILTER KATEGORI BAR
+        function filterCategory(kategori) {
+            kategoriAktif = kategori;
+            
+            // Perbarui visual tombol aktif
+            const tombols = document.querySelectorAll('.filter-btn');
+            tombols.forEach(btn => {
+                if(btn.innerText.toLowerCase() === kategori.toLowerCase() || (kategori === 'semua' && btn.innerText.toLowerCase() === 'semua')) {
+                    btn.className = "filter-btn px-4 py-2 rounded bg-red-600 text-white";
+                } else {
+                    btn.className = "filter-btn px-4 py-2 rounded bg-gray-200 text-gray-700 hover:bg-gray-300";
+                }
+            });
+
+            // Kosongkan kolom cari saat ganti kategori agar tidak tumpang tindih
+            document.getElementById("searchInput").value = ""; 
+            
+            const dataTerfilter = kategori === "semua" ? databaseBerita : databaseBerita.filter(b => b.kategori === kategori);
+            renderNews(dataTerfilter);
+        }
+
+        // 5. ATUR MODE GELAP / MODE HOROR MALAM
+        function toggleTheme() {
+            const body = document.body;
+            const header = document.getElementById("mainHeader");
+            const utility = document.getElementById("utilityBar");
+            const subLogo = document.getElementById("subLogo");
+            const btnText = document.getElementById("themeBtnText");
+
+            body.classList.toggle("horror-mode");
+
+            if (body.classList.contains("horror-mode")) {
+                header.classList.replace("bg-white", "bg-gray-950");
+                header.classList.replace("border-gray-100", "border-red-950");
+                utility.classList.replace("bg-white", "bg-gray-900");
+                utility.classList.replace("border-gray-200", "border-red-950");
+                subLogo.className = "text-white";
+                btnText.innerText = "Mode Portal Klasik";
+            } else {
+                header.classList.replace("bg-gray-950", "bg-white");
+                header.classList.replace("border-red-950", "border-gray-100");
+                utility.classList.replace("bg-gray-900", "bg-white");
+                utility.classList.replace("border-red-950", "border-gray-200");
+                subLogo.className = "text-gray-900";
+                btnText.innerText = "Mode Horor Malam";
+            }
+        }
+
+        // 6. LOGIKA MODAL POPUP (BACA DETAIL JENDELA BARU)
+        function openModal(id) {
+            const berita = databaseBerita.find(b => b.id === id);
+            if(!berita) return;
+
+            document.getElementById("modalTitle").innerText = berita.judul;
+            document.getElementById("modalCategory").innerText = berita.kategori;
+            document.getElementById("modalImage").style.backgroundImage = `url('${berita.gambar}')`;
+            document.getElementById("modalMeta").innerHTML = `<i class="fa-regular fa-clock mr-1"></i> Dipublikasikan ${berita.waktu} &bull; Oleh Redaksi`;
+            
+            // Memisah isi cerita menjadi dua paragraf agar rapi dibaca
+            document.getElementById("modalBody").innerHTML = `
+                <p class="font-bold text-gray-700 dark:text-gray-300 mb-3">${berita.ringkasan}</p>
+                <p class="text-gray-600 dark:text-gray-400">${berita.isi}</p>
+                <p class="text-gray-600 dark:text-gray-400 mt-2">Hingga saat ini, area tersebut masih dipantau secara swadaya oleh karang taruna setempat guna mengantisipasi hal-hal buruk yang tidak diinginkan.</p>
+            `;
+
+            const modal = document.getElementById("articleModal");
+            modal.classList.replace("hidden", "flex");
+            document.body.style.overflow = "hidden"; // matikan scroll latar belakang
+        }
+
+        function closeModal() {
+            const modal = document.getElementById("articleModal");
+            modal.classList.replace("flex", "hidden");
+            document.body.style.overflow = "auto"; // aktifkan kembali scroll
+        }
+
+        // Tutup modal jika area luar diklik
+        window.onclick = function(event) {
+            const modal = document.getElementById("articleModal");
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+
+        // 7. SISTEM KOMENTAR DINAMIS (SIMULASI SEMENTARA)
+        function addComment() {
+            const input = document.getElementById("commentInput");
+            const text = input.value.trim();
+            if(!text) return alert("Komentar tidak boleh kosong!");
+
+            const container = document.getElementById("commentsContainer");
+            const newComment = document.createElement("div");
+            newComment.className = "bg-red-50/50 p-3 rounded text-xs border border-red-100 animate-fadeIn";
+            newComment.innerHTML = `<span class="font-bold text-red-600">Anda (Anonim):</span> ${text}`;
+            
+            container.prepend(newComment);
+            input.value = "";
+            container.scrollTop = 0;
+        }
+
+        // 8. SIMULASI POLING SUARA
+        function vote(pilihan) {
+            alert(`Terima kasih! Suara Anda untuk opsi [${pilihan.toUpperCase()}] berhasil direkam.`);
+        }
+
+        // 9. SIMULASI FITUR BAGIKAN (SHARE)
+        function shareArticle() {
+            navigator.clipboard.writeText(window.location.href);
+            alert("Tautan artikel berita berhasil disalin ke papan klip!");
+        }
+
+        // Jalankan render berita awal saat web dibuka pertama kali
+        document.addEventListener("DOMContentLoaded", () => {
+            renderNews(databaseBerita);
+        });
+    </script>
+</body>
+</html>
